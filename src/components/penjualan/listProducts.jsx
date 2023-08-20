@@ -9,7 +9,7 @@ const Products = ({menus,enterCharts}) => {
             <div  className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3  gap-4 mt-5">
                 {menus && menus.map((menu) => (
                     <div key={menu.id} 
-                        className="border-2 pb-2 shadow-xl"
+                        className="border-2 pb-2 shadow-xl cursor-pointer"
                         onClick={() => enterCharts(menu)}
                     >
                         <img src={`assets/images/`+menu.category.nama.toLowerCase()+"/"+menu.gambar} alt={menu.gambar} />

@@ -4,7 +4,6 @@ import Products from "../../components/penjualan/listProducts";
 import Hasil from "../../components/penjualan/Hasil";
 import { API_URL } from "../../utils/constant";
 import axios from "axios";
-import { MainNavigasi } from "../../components/MainNavigasi";
 import swal from "sweetalert";
 
 

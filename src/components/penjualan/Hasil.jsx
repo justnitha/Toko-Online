@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { numberWithCommas } from "../../utils/numberFormat";
 import TotalBayar from "./TotalBayar";
 import { FaMinus, FaPlus, FaTrash } from "react-icons/fa";
-import {GrFormClose} from "react-icons/gr"
+import { GrFormClose } from "react-icons/gr";
 import axios from "axios";
 import swal from "sweetalert";
 import { API_URL } from "../../utils/constant";
@@ -14,99 +14,125 @@ export default class Hasil extends Component {
     this.state = {
       showModals: false,
       cartDetail: null,
-      jumlah: 0,
+      jumlah: 1,
       keterangan: " ",
-      totalHarga:0,
+      totalHarga: 0,
     };
   }
 
-  handleShow = (cart) => {
+  handleShow = (cart) => { //handleShow fungsi untuk menampilkan  modal 
     this.setState({
       showModals: true,
       cartDetail: cart,
       jumlah: cart.jumlah,
-      keterangan:cart.keterangan,
-      totalHarga:cart.total_harga
+      keterangan: cart.keterangan,
+      totalHarga: cart.total_harga,
     });
   };
 
-  handleClose = () => {
+  handleClose = () => { //handleShow fungsi untuk menampilkan  modal 
     this.setState({
       showModals: false,
     });
   };
 
-  handlePlus = () => {
+  handlePlus = () => { //handleShow fungsi untuk menambahkan jumlah pada  modal 
     this.setState({
       jumlah: this.state.jumlah + 1,
-      totalHarga: this.state.cartDetail.product.harga*(this.state.jumlah + 1)
+      totalHarga: this.state.cartDetail.product.harga * (this.state.jumlah + 1),
     });
   };
-  
-  handleMinus = () => {
-    if (this.state.jumlah > 1) {  // >1 artinya minus tidak boleh kurang dari 1
+
+  handleMinus = () => { //handleShow fungsi untuk mengurangi jumlah pada  modal 
+    if (this.state.jumlah > 1) {
       this.setState({
         jumlah: this.state.jumlah - 1,
-        totalHarga: this.state.cartDetail.product.harga*(this.state.jumlah - 1)
+        totalHarga:
+          this.state.cartDetail.product.harga * (this.state.jumlah - 1),
       });
     }
   };
-  changeHandler = (event) => {
+
+  changeHandler = (event) => { //untuk menambahkan atau mengupdate keterangan
     this.setState({
       keterangan: event.target.value,
     });
   };
 
-  handleSubmit = (event) => {
-    event.preventDefault();
-
-    this.handleClose()// ketika di submit auto close
+  handleJumlahChange = (event) => { // untuk inputan jumlah supaya dinamis
+    const inputValue = event.target.value;
+    const newJumlah = parseInt(inputValue, 10);
   
-    // console.log("Hai", this.state.keterangan);
-    const data ={
-      jumlah:this.state.jumlah,
-      total_harga: this.state.totalHarga,
-      product:this.state.cartDetail.product,
-      keterangan:this.state.keterangan
-  }
-  axios
-  .put(API_URL+"keranjangs/"+this.state.cartDetail.id, data)
-  .then(res => {
-    this.props.getListKeranjang();
-      swal({
-          title: "Update Pesanan",
-          text: "Sukses Update Pesanan" + data.product.nama,
-          icon: "success",
-          button: false,
-          timer:1000
-        });
-  })
-  .catch(error=> {
-      console.log("eror ya",error);
-  })
+    if (!isNaN(newJumlah)) {
+      const newTotalHarga = this.state.cartDetail.product.harga * newJumlah;
+  
+      this.setState({
+        jumlah: newJumlah,
+        totalHarga: newTotalHarga,
+        error: "", // Hapus peringatan eror jika jumlah diisi dengan benar
+      });
+    } else {
+      this.setState({
+        jumlah: "", // Reset jumlah jika NaN
+        totalHarga: 0,
+        error: "Tolong masukkan jumlah yang valid.",
+      });
+    }
   };
 
-  handleRemovePesanan = (id) => { // pakai id unutk menghapus pesanan dengan id yang sama
-    this.handleClose()// ketika di submit auto close
+  handleSubmit = (event) => { // fungsi untuk menyimpan pada modal
+    event.preventDefault();
+    if (this.state.jumlah === "") {
+      this.setState({
+        error: "Tolong masukkan jumlah yang valid.", // ketika tidak ada value maka error
+      });
+    } else {
+      this.handleClose(); // ketika di submit auto close
+      const data = {
+        jumlah: this.state.jumlah,
+        total_harga: this.state.totalHarga,
+        product: this.state.cartDetail.product,
+        keterangan: this.state.keterangan,
+      };
+      axios
+        .put(API_URL + "keranjangs/" + this.state.cartDetail.id, data)
+        .then((res) => {
+          this.props.getListKeranjang();
+          swal({
+            title: "Update Pesanan",
+            text: "Sukses Update Pesanan " + data.product.nama,
+            icon: "success",
+            button: false,
+            timer: 1000,
+          });
+        })
+        .catch((error) => {
+          console.log("eror ya", error);
+        });
+    }
+  };
   
-  axios
-  .delete(API_URL+"keranjangs/"+id)
-  .then(res => {
-    this.props.getListKeranjang();
-      swal({
+
+  handleRemovePesanan = (id) => { // untuk menghapus pesanan
+    // pakai id unutk menghapus pesanan dengan id yang sama
+    this.handleClose(); // ketika di submit auto close
+
+    axios
+      .delete(API_URL + "keranjangs/" + id)
+      .then((res) => {
+        this.props.getListKeranjang();
+        swal({
           title: "Delete Pesanan",
           text: "Sukses Delete Pesanan" + this.state.cartDetail.product.nama,
           icon: "error",
           button: false,
-          timer:1000
+          timer: 1000,
         });
-  })
-  .catch(error=> {
-      console.log("eror ya",error);
-  })
+      })
+      .catch((error) => {
+        console.log("eror ya", error);
+      });
   };
-  
-  
 
   render() {
     const { carts } = this.props;
@@ -140,7 +166,7 @@ export default class Hasil extends Component {
             ))}
           </div>
         )}
-
+        {/* Modal */}
         {this.state.showModals && this.state.cartDetail && (
           <div>
             <div
@@ -153,61 +179,77 @@ export default class Hasil extends Component {
                 <strong>
                   (Rp.{numberWithCommas(this.state.cartDetail.product.harga)})
                 </strong>
-                <GrFormClose className="ms-auto cursor-pointer" onClick={this.handleClose}/>
+                <GrFormClose
+                  className="ms-auto cursor-pointer"
+                  onClick={this.handleClose}
+                />
               </p>
               <div className="bg-slate-200 h-[1px] w-full "></div>
-              <form action="" className="pt-3 text-base bg-white w-full" onSubmit={this.handleSubmit}>
+              <form
+                action=""
+                className="pt-3 text-base bg-white w-full"
+                onSubmit={this.handleSubmit}
+              >
                 <label htmlFor="">Total Harga : </label>
                 <p>
-                  <strong>
-                    Rp.{numberWithCommas(this.state.totalHarga)}
-                  </strong>
+                  <strong>Rp.{numberWithCommas(this.state.totalHarga)}</strong>
                 </p>
                 <div className="py-2">
-                <p>Jumlah : </p>
-                <div className="flex items-center gap-3 mt-2">
-                  <button 
-                    type="button" 
-                    onClick={this.handleMinus}
-                    className="bg-blue-400 rounded-md text-white p-2 hover:bg-purple-800 hover:outline hover:outline-[3px] hover:outline-purple-400"
-                  >
-                    <FaMinus />
-                  </button>
-                  <strong>{this.state.jumlah}</strong>
-                  <button
-                    type="button"
-                    onClick={this.handlePlus}
-                    className="bg-blue-400 rounded-md text-white p-2 hover:bg-purple-800 hover:outline hover:outline-[3px] hover:outline-purple-400"  
-                  >
-                    <FaPlus />
-                  </button>
-                </div>
+                  <p>Jumlah : </p>
+                  <div className="flex items-center gap-3 mt-2">
+                    <button
+                      type="button"
+                      onClick={this.handleMinus}
+                      className="bg-blue-400 rounded-md text-white p-2 hover:bg-purple-800 hover:outline hover:outline-[3px] hover:outline-purple-400"
+                    >
+                      <FaMinus />
+                    </button>
+                    {/* <strong>{this.state.jumlah}</strong> */}
+                    <input
+                      type="text"
+                      value={this.state.jumlah}
+                      onChange={this.handleJumlahChange}
+                      className="w-14 px-3 py-1 hover:outline text-center"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={this.handlePlus}
+                      className="bg-blue-400 rounded-md text-white p-2 hover:bg-purple-800 hover:outline hover:outline-[3px] hover:outline-purple-400"
+                    >
+                      <FaPlus />
+                    </button>
+                  </div>
+                  {this.state.error && <p className="text-red-500">{this.state.error}</p>}
                 </div>
                 <div>
-                    <label htmlFor="">Keterangan : </label>
-                    <textarea 
-                        name="" 
-                        id="Keterangan"  
-                        rows="5" 
-                        className="w-full outline px-3 py-1 mt-1 rounded-lg"
-                        placeholder="Contoh: Pedas, Nasi Setengah"
-                        value={this.state.keterangan}
-                        onChange={(event)=> this.changeHandler(event)}
-                    >
-                    </textarea>
+                  <label htmlFor="">Keterangan : </label>
+                  <textarea
+                    name=""
+                    id="Keterangan"
+                    rows="5"
+                    className="w-full outline px-3 py-1 mt-1 rounded-lg"
+                    placeholder="Contoh: Pedas, Nasi Setengah"
+                    value={this.state.keterangan}
+                    onChange={(event) => this.changeHandler(event)}
+                  ></textarea>
                 </div>
-                <button 
+                <button
                   type="submit"
-                  className="bg-blue-400 rounded-md text-white py-1 px-2 mt-5 hover:bg-purple-800 hover:outline hover:outline-[3px] hover:outline-purple-400"  
+                  className="bg-blue-400 rounded-md text-white py-1 px-2 mt-5 hover:bg-purple-800 hover:outline hover:outline-[3px] hover:outline-purple-400"
                 >
                   simpan
                 </button>
               </form>
               <div className="bg-slate-200 h-[1px] w-full mt-4"></div>
-              <button 
-                onClick={()=> this.handleRemovePesanan(this.state.cartDetail.id)} 
-                className="flex items-center ms-auto bg-red-500 rounded-md text-white py-1 px-2 mt-5 hover:bg-red-800 hover:outline hover:outline-[3px] hover:outline-red-400">
-                  <FaTrash/>Hapus Pesanan
+              <button
+                onClick={() =>
+                  this.handleRemovePesanan(this.state.cartDetail.id)
+                }
+                className="flex items-center ms-auto bg-red-500 rounded-md text-white py-1 px-2 mt-5 hover:bg-red-800 hover:outline hover:outline-[3px] hover:outline-red-400"
+              >
+                <FaTrash />
+                Hapus Pesanan
               </button>
             </div>
           </div>
