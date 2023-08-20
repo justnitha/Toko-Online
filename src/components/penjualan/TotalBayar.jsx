@@ -14,7 +14,7 @@ export default class TotalBayar extends Component {
             menus: this.props.carts
         }
         axios.post(API_URL+"pesanans",pesanan).then((res) =>{
-            window.location.href = '/sukses';
+            window.location.href = '#/sukses';
         })
     }
   render() {
