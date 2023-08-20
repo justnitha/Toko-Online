@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/Toko-Online/static/css/main.05691428.css",
+    "main.js": "/Toko-Online/static/js/main.bf5d5cca.js",
+    "static/js/787.a5b2160a.chunk.js": "/Toko-Online/static/js/787.a5b2160a.chunk.js",
+    "index.html": "/Toko-Online/index.html",
+    "main.05691428.css.map": "/Toko-Online/static/css/main.05691428.css.map",
+    "main.bf5d5cca.js.map": "/Toko-Online/static/js/main.bf5d5cca.js.map",
+    "787.a5b2160a.chunk.js.map": "/Toko-Online/static/js/787.a5b2160a.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.05691428.css",
+    "static/js/main.bf5d5cca.js"
+  ]
+}
