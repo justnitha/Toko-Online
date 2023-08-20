@@ -1,4 +1,4 @@
-.App {
+/*.App {
   text-align: center;
 }
 
@@ -35,4 +35,15 @@
   to {
     transform: rotate(360deg);
   }
+}*/
+
+h4 {
+  font-weight: 600;
+}
+.categori-aktif{
+  background:rgb(96 165 250);
+  color:white;
+}
+.overflow-auto::-webkit-scrollbar{
+  display:none
 }
